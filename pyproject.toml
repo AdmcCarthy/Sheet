@@ -1,0 +1,41 @@
+[project]
+name = "sheet"
+version = "0.1.0"
+description = "Static, print and plot-grade map sheets up to A0, built on Relief and Plate"
+readme = "README.md"
+authors = [{ name = "Adam McCarthy", email = "24669992+AdmcCarthy@users.noreply.github.com" }]
+requires-python = ">=3.12"
+dependencies = ["numpy>=2", "scipy>=1.14", "rasterio>=1.4", "pillow>=11", "pyproj>=3.7", "shapely>=2.1", "plate", "playwright>=1.44"]
+
+[project.scripts]
+sheet = "sheet:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pypdf>=7.0.0",
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+]
+
+[tool.uv.sources]
+# Local development against the sibling checkout. Switch to the tagged git source once Plate is pushed:
+# plate = { git = "https://github.com/AdmcCarthy/Plate", tag = "v0.1.0" }
+plate = { path = "../Plate", editable = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]  # HTML and SVG fragments
+
+[tool.ruff.lint.per-file-ignores]
+"spikes/*" = ["E402", "E702"]
