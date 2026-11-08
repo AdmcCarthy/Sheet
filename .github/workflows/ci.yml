@@ -19,7 +19,7 @@ jobs:
           path: Relief
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --locked
-      - name: Fetch Relief's tile data (north_sea only, pinned release: the tests' region, 26 MB, checksummed)
+      - name: Fetch Relief tile data (north_sea only, from a pinned release, 26 MB, checksummed)
         working-directory: Relief
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
