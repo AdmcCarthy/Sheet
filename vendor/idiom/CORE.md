@@ -5,7 +5,6 @@ Import this from a project `CLAUDE.md`. Short on purpose; detail lives in the st
 ## Language
 - British English (colour, licence noun, visualise, metre, analyse). Sentence-case headings.
 - Plain words. Say what happened and why; mechanism first. "We" for our own work.
-- Banned words and phrases: see `personal/banned.md` when writing prose for Adam.
 
 ## Units and numbers
 - Metric first (Sm³, km, °C), boe alongside or by toggle. 1 Sm³ o.e. = 6.29 boe (Sodir convention); state it.
