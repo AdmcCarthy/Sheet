@@ -10,7 +10,7 @@ from sheet.frame import Frame, effective_dpi, fit_scale
 from sheet.layers import Projector
 from sheet.style import LB, SB, Style, rgb, tune
 
-RELIEF = Path(__import__('os').environ.get('RELIEF_DIR', Path(__file__).resolve().parents[2] / 'Relief'))
+RELIEF = Path(__import__("os").environ.get("RELIEF_DIR", Path(__file__).resolve().parents[2] / "Relief"))
 needs_relief = pytest.mark.skipif(
     not (RELIEF / "data/out/north_sea/demo/elev.webp").exists(), reason="no Relief checkout next to Sheet"
 )
