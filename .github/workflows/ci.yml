@@ -15,14 +15,15 @@ jobs:
           path: Sheet
       - uses: actions/checkout@v4
         with:
-          repository: AdmcCarthy/Plate
-          path: Plate
-      - uses: actions/checkout@v4
-        with:
           repository: AdmcCarthy/Relief
           path: Relief
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --locked
+      - name: Fetch Relief's tile data (north_sea only, pinned release: the tests' region, 26 MB, checksummed)
+        working-directory: Relief
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run --locked python scripts/fetch_data.py north_sea --tag data-2026-11-09-gebco --dest data/out
       - run: uv run ruff check . && uv run ruff format --check .
       - run: uv run playwright install --with-deps chromium
       - run: uv run pytest -q

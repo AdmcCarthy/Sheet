@@ -14,3 +14,5 @@ anything from the private Idiom repo into here** except files in its `public-man
 - Memory: render in strips (`render_terrain`), never hold a full-sheet float array. Check `df` and RAM before an A0 at 300 dpi.
 - Never run Relief's fetch or hires builds from here. Large outputs are not committed.
 - `uv run pytest`; look at a rendered sheet (`--format png`) before calling layout work done. `styleguide/sheets.md` is the authority.
+- CI fetches Relief's north_sea data from a pinned data release (`.github/workflows/ci.yml`, tag `data-2026-11-09-gebco`) so the layer, golden-image and sheet tests run instead of skipping. When Relief publishes a rebuilt north_sea, bump the tag and re-check `tests/golden/`.
+
