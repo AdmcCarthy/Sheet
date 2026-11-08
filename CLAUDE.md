@@ -16,3 +16,10 @@ anything from the private Idiom repo into here** except files in its `public-man
 - `uv run pytest`; look at a rendered sheet (`--format png`) before calling layout work done. `styleguide/sheets.md` is the authority.
 - CI fetches Relief's north_sea data from a pinned data release (`.github/workflows/ci.yml`, tag `data-2026-11-09-gebco`) so the layer, golden-image and sheet tests run instead of skipping. When Relief publishes a rebuilt north_sea, bump the tag and re-check `tests/golden/`.
 
+## Idiom (private repo)
+
+Idiom is Adam McCarthy's private repo (`github.com/AdmcCarthy/Idiom`; `gh repo clone AdmcCarthy/Idiom` with access, normally linked at
+`../../shared/idiom`) of voice, house style, working rules and the lookup tables agents use first: `DIRECTORY.md` says which repo already
+does a job, `DATASETS.md` gives every dataset's terms, attribution line and status. Read the relevant one before choosing a repo or
+using data, and update it when you learn something new. Never copy anything from its `personal/` or `working/` folders into this repo
+or quote it in public output; if the folder is not available, say so and carry on with this file.
