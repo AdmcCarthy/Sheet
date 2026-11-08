@@ -412,27 +412,12 @@ wheels = [
 [[package]]
 name = "plate"
 version = "0.1.0"
-source = { editable = "../Plate" }
+source = { git = "https://github.com/AdmcCarthy/Plate?tag=v0.1.0#c21a2b029e523d9dca312b415656515bd7705bde" }
 dependencies = [
     { name = "jinja2" },
     { name = "pillow" },
     { name = "playwright" },
     { name = "pypdf" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "jinja2", specifier = ">=3.1.6" },
-    { name = "pillow", specifier = ">=11" },
-    { name = "playwright", specifier = ">=1.44" },
-    { name = "pypdf", specifier = ">=5" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=9.2.0" },
-    { name = "ruff", specifier = ">=0.17.4" },
-    { name = "subscout", git = "https://github.com/AdmcCarthy/SubScout?tag=v0.5.0" },
 ]
 
 [[package]]
@@ -822,7 +807,7 @@ dev = [
 requires-dist = [
     { name = "numpy", specifier = ">=2" },
     { name = "pillow", specifier = ">=11" },
-    { name = "plate", editable = "../Plate" },
+    { name = "plate", git = "https://github.com/AdmcCarthy/Plate?tag=v0.1.0" },
     { name = "playwright", specifier = ">=1.44" },
     { name = "pyproj", specifier = ">=3.7" },
     { name = "rasterio", specifier = ">=1.4" },

@@ -22,9 +22,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-# Local development against the sibling checkout. Switch to the tagged git source once Plate is pushed:
-# plate = { git = "https://github.com/AdmcCarthy/Plate", tag = "v0.1.0" }
-plate = { path = "../Plate", editable = true }
+plate = { git = "https://github.com/AdmcCarthy/Plate", tag = "v0.1.0" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
