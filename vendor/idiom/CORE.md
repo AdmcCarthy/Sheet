@@ -18,6 +18,12 @@ Import this from a project `CLAUDE.md`. Short on purpose; detail lives in the st
   judgement; give range or assumption). Never hide uncertainty. Every figure: title, units, source with date,
   confidence.
 
+## Reuse and licence
+- Reuse before you build: the maintainer keeps a directory of existing repos and what each is for (Idiom `DIRECTORY.md`). Style
+  comes from SubScout, map bases from Relief, facts and the knowledge store from the data engine. Say so when none fits.
+- Every repo carries the MIT License with Acknowledgement (`house/licence.md`): anything built with the work says so, visibly, and
+  never implies endorsement. Third-party data and vendored code keep their own terms.
+
 ## Working rules
 - Act on the plan; stop at agreed gates and report outcomes plainly, including failures and skipped steps.
 - Never run long or costly data fetches unasked. Never make anything public, delete data, force-push or

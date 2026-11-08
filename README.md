@@ -30,3 +30,9 @@ Portrait sheets get a three-column footer, landscape sheets a right-hand rail. S
 this way and `styleguide/sheets.md` for the furniture rules. **Terrain processing is Relief's job.** Sheet requests elevation, climate zones, hillshade and contours for one frame
 (region, extent, scale, dpi) and draws what comes back (contract: Relief `docs/print-layers.md`, `layers.json`). Contour
 intervals, generalisation and tile-level choice therefore stay in one place. Not yet: locator inset, grid ticks.
+
+## Licence and acknowledgement
+
+MIT License with Acknowledgement ([LICENSE](LICENSE)): the MIT terms plus one condition. Anything built with this work says so,
+visibly and in plain words, and does not imply endorsement: "Built with Sheet by Adam McCarthy (https://github.com/AdmcCarthy/Sheet)". The wording is custom, so
+the licence is not OSI-approved. Third-party data and vendored code keep their own terms.
