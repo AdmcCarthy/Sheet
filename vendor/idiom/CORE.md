@@ -4,7 +4,8 @@ Import this from a project `CLAUDE.md`. Short on purpose; detail lives in the st
 
 ## Language
 - British English (colour, licence noun, visualise, metre, analyse). Sentence-case headings.
-- Plain words. Say what happened and why; mechanism first. "We" for our own work.
+- Plain words. Say what happened and why; mechanism first. Impersonal voice for published work: no "we" or "I".
+- Written for executive leadership and technically trained colleagues (engineering, science): precise and measured, not academic.
 
 ## Units and numbers
 - Metric first (Sm³, km, °C), boe alongside or by toggle. 1 Sm³ o.e. = 6.29 boe (Sodir convention); state it.

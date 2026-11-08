@@ -6,7 +6,9 @@
 - **Sentence case** for headings and titles.
 - **Plain words:** say what happened and why. Explain mechanism first ("why the oil is there").
 - **Domain terms** get glossary tooltips on first use (tie-back, play, P50, PRMS, two-way time).
-- First person plural for our own work: "we calculate", "we interpret".
+- **Impersonal voice:** no "we" or "I". Say what was done and by what method: "calculated from", "interpreted as",
+  "the evidence supports". Written for executive leadership and technically trained colleagues: precise and measured, not
+  academic.
 
 ## Units and numbers
 
@@ -28,7 +30,7 @@ same words.
 | Level | Meaning | Wording | Badge |
 |---|---|---|---|
 | **Observed** | Measured or published by the source | Plain statement: "Sodir lists 56 licences" | filled dot |
-| **Derived** | Our calculation from observed data | "We calculate…", plus the method | ring |
+| **Derived** | Calculated from observed data | "Calculated from…", plus the method | ring |
 | **Interpreted** | Depends on a model, assumption or judgement | Calibrated hedges ("likely", "around", "roughly") plus the assumption | diamond |
 
 - Interpreted values carry their range or assumption (see [uncertainty.md](uncertainty.md)).

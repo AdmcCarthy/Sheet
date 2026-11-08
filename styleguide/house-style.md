@@ -4,7 +4,8 @@ The authority for published pages is the SubScout style guide
 (https://github.com/AdmcCarthy/SubScout/tree/main/styleguide). This file records only the decisions that
 are shared by every output repo (SubScout, Plate, Sheet).
 
-- **Voice:** the interpreter's voice. Confident about the mechanism, explicit about the uncertainty.
+- **Voice:** the interpreter's voice. Confident about the mechanism, explicit about the uncertainty. Impersonal (no "we" or
+  "I"), measured, for executive leadership and technically trained colleagues; precise without being academic.
 - **Restraint:** Norwegian: function first, just enough, truth to materials, one warm light in a cool room.
 - **Type:** Ledger (Newsreader, Instrument Sans, JetBrains Mono). **Palette:** Tide; story palette quiet and
   direct-labelled; categorical palette for identity of 3-5 entities. **Room:** Nordic cool, mørketid at night.
