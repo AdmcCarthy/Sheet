@@ -13,3 +13,6 @@ are shared by every output repo (SubScout, Plate, Sheet).
 - **Maps:** normalise choropleths, declare classification, state CRS, scale and source resolution.
 - **Print (Plate and Sheet):** real page sizes in mm, type no smaller than 6 pt, vector text, metadata in the
   file, effective resolution stated.
+- **Headings and labels:** the article headline may be creative; sub-story, panel and box headings are plain and say what
+  is there, so the device does not repeat. Appendix label: "Basis of analysis" (not "How we know").
+- **Endings:** a section ends on its last point. No summary paragraph restating what was said.
