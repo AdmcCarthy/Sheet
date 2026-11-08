@@ -140,3 +140,79 @@ def test_relief_layers_drive_a_shaded_contoured_sheet(tmp_path):
     m = build_sheet(spec, src, meta, tmp_path, formats=("pdf",))
     assert not m["qa"], m["qa"]
     assert "Contours (Relief)" in note
+
+
+def _overlay_file(tmp_path, features):
+    import json
+
+    p = tmp_path / "layer.geojson"
+    p.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
+    return p
+
+
+def _path_points(d: str) -> list[tuple[float, float]]:
+    import re
+
+    return [(float(a), float(b)) for a, b in re.findall(r"(-?\d+\.?\d*),(-?\d+\.?\d*)", d)]
+
+
+def test_overlay_geometry_is_mapped_to_sheet_millimetres_without_deprecation_warnings(tmp_path):
+    """Same-CRS polygon, and a lon/lat line reprojected: coordinates land where the frame geometry says, silently."""
+    import warnings
+
+    from pyproj import Transformer
+
+    from sheet.layers import Overlay, Projector, geometry_paths
+
+    fr = Frame(centre=(500_000.0, 6_600_000.0), scale=1_000_000, w_mm=200, h_mm=100, dpi=127)
+    pr = Projector(fr, "EPSG:25832")
+    k = fr.scale / 1000  # ground metres per mm
+    square = {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [[500_000, 6_600_000], [510_000, 6_600_000], [510_000, 6_610_000], [500_000, 6_610_000], [500_000, 6_600_000]]
+            ],
+        },
+    }
+    lon, lat = Transformer.from_crs("EPSG:25832", "EPSG:4326", always_xy=True).transform(505_000, 6_605_000)
+    line = {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {"type": "LineString", "coordinates": [[lon - 0.02, lat], [lon + 0.02, lat]]},
+    }
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # any DeprecationWarning fails the test
+        polys, _ = geometry_paths(Overlay(_overlay_file(tmp_path, [square]), src_crs="EPSG:25832"), pr)
+        _, lines = geometry_paths(Overlay(_overlay_file(tmp_path, [line])), pr)
+    pts = _path_points(polys[0])
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    # frame centre is the middle of the 200 x 100 mm frame; the square starts there and rises 10 km = 10 mm at 1:1,000,000
+    assert min(xs) == pytest.approx(100.0, abs=0.01) and max(xs) == pytest.approx(100.0 + 10_000 / k, abs=0.01)
+    assert min(ys) == pytest.approx(50.0 - 10_000 / k, abs=0.01) and max(ys) == pytest.approx(50.0, abs=0.01)
+    lp = _path_points(lines[0])
+    exp = [
+        pr.to_mm(*Transformer.from_crs("EPSG:4326", "EPSG:25832", always_xy=True).transform(lo, lat))
+        for lo in (lon - 0.02, lon + 0.02)
+    ]
+    assert lp[0] == pytest.approx(exp[0], abs=0.02) and lp[-1] == pytest.approx(exp[1], abs=0.02)
+
+
+def test_a_rewritten_overlay_file_is_read_again(tmp_path):
+    """The GeoJSON cache is keyed on file version, not just path: Relief layers are regenerated at the same path."""
+    from sheet.layers import Overlay, Projector, geometry_paths
+
+    fr = Frame(centre=(500_000.0, 6_600_000.0), scale=1_000_000, w_mm=200, h_mm=100, dpi=127)
+    pr = Projector(fr, "EPSG:25832")
+
+    def square(x):
+        ring = [[x, 6_600_000], [x + 5_000, 6_600_000], [x + 5_000, 6_605_000], [x, 6_605_000], [x, 6_600_000]]
+        return {"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [ring]}}
+
+    p = _overlay_file(tmp_path, [square(500_000)])
+    first = geometry_paths(Overlay(p, src_crs="EPSG:25832"), pr)[0][0]
+    _overlay_file(tmp_path, [square(520_000)])  # same path, new content
+    second = geometry_paths(Overlay(p, src_crs="EPSG:25832"), pr)[0][0]
+    assert first != second and second.startswith("M120.00")

@@ -8,9 +8,10 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
+import shapely
 from pyproj import CRS, Transformer
 from shapely.geometry import MultiPolygon, Polygon, box, shape
-from shapely.ops import transform as shp_transform
 
 from .frame import Frame
 
@@ -61,8 +62,14 @@ def _poly_d(p: Polygon) -> str:
 
 
 @functools.lru_cache(maxsize=8)
-def _load(path: str) -> dict:
+def _load_cached(path: str, mtime_ns: int, size: int) -> dict:
     return json.loads(Path(path).read_text())
+
+
+def _load(path: str) -> dict:
+    """Parsed GeoJSON, cached per file version: a regenerated file at the same path is read again."""
+    st = Path(path).stat()
+    return _load_cached(path, st.st_mtime_ns, st.st_size)
 
 
 def geometry_paths(ov: Overlay, pr: Projector) -> tuple[list[str], list[str]]:
@@ -79,13 +86,13 @@ def geometry_paths(ov: Overlay, pr: Projector) -> tuple[list[str], list[str]]:
             continue
         g = shape(ft["geometry"] if "geometry" in ft else ft)
         if not same_crs:
-            g = shp_transform(tr.transform, g)
+            g = shapely.transform(g, lambda c: np.column_stack(tr.transform(c[:, 0], c[:, 1])))
         if not g.intersects(clip):
             continue
         g = g.intersection(clip).simplify(tol)
         if g.is_empty:
             continue
-        g = shp_transform(lambda x, y, z=None: pr.to_mm(x, y), g)
+        g = shapely.transform(g, lambda c: np.column_stack(pr.to_mm(c[:, 0], c[:, 1])))
         parts = list(g.geoms) if hasattr(g, "geoms") else [g]
         for p in parts:
             if isinstance(p, Polygon):
