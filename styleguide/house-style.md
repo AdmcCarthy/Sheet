@@ -15,5 +15,6 @@ are shared by every output repo (SubScout, Plate, Sheet).
 - **Print (Plate and Sheet):** real page sizes in mm, type no smaller than 6 pt, vector text, metadata in the
   file, effective resolution stated.
 - **Headings and labels:** the article headline may be creative; sub-story, panel and box headings are plain and say what
-  is there, so the device does not repeat. Appendix label: "Basis of analysis" (not "How we know").
+  is there, and differ in construction from their neighbours, so no device runs the whole piece. The same goes for the shape
+  of steps and paragraphs: vary it (SubScout reports repeats as build advice). Appendix label: "Basis of analysis" (not "How we know").
 - **Endings:** a section ends on its last point. No summary paragraph restating what was said.

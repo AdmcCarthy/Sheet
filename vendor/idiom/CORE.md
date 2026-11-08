@@ -5,6 +5,7 @@ Import this from a project `CLAUDE.md`. Short on purpose; detail lives in the st
 ## Language
 - British English (colour, licence noun, visualise, metre, analyse). Sentence-case headings.
 - Plain words. Say what happened and why; mechanism first. Impersonal voice for published work: no "we" or "I".
+- Vary structure: one catchy headline, plain varied headings after it; do not give every section the same shape.
 - Written for executive leadership and technically trained colleagues (engineering, science): precise and measured, not academic.
 
 ## Units and numbers
