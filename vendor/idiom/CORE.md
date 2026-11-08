@@ -1,11 +1,13 @@
 # Core rules (Adam McCarthy)
 
-Import this from a project `CLAUDE.md`. Short on purpose; detail lives in the style guide of the repo.
+Import this from a project `CLAUDE.md`. Short on purpose; detail lives in Idiom `house/` and SubScout's style guide. Precedence:
+the truth gate, then this file, then `house/`, then the style guide, then the repo's own `CLAUDE.md` (Idiom `CONCEPT.md`).
 
 ## Language
 - British English (colour, licence noun, visualise, metre, analyse). Sentence-case headings.
 - Plain words. Say what happened and why; mechanism first. Impersonal voice for published work: no "we" or "I".
 - Vary structure: one catchy headline, plain varied headings after it; do not give every section the same shape.
+- Preferred terms in Idiom `house/terms.md`; prose is run through its checkers before it is shown.
 - Written for executive leadership and technically trained colleagues (engineering, science): precise and measured, not academic.
 
 ## Units and numbers
