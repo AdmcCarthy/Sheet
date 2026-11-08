@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import functools
 import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
 
-from pyproj import Transformer
+from pyproj import CRS, Transformer
 from shapely.geometry import MultiPolygon, Polygon, box, shape
 from shapely.ops import transform as shp_transform
 
@@ -25,6 +26,7 @@ class Overlay:
     dash: str = ""
     src_crs: str = "EPSG:4326"
     source: str = ""  # attribution line for this layer
+    where: dict | None = None  # keep features whose properties equal these values
 
 
 class Projector:
@@ -35,6 +37,7 @@ class Projector:
         r = math.radians(frame.rotation)
         self.c, self.s = math.cos(r), math.sin(r)
         self.k = frame.scale / 1000.0  # ground metres per sheet millimetre
+        self.tol_mm = max(0.03, 0.3 * 25.4 / frame.dpi)  # path simplification: 0.3 of a print pixel
 
     def to_mm(self, gx, gy):
         dx, dy = gx - self.f.centre[0], gy - self.f.centre[1]
@@ -57,17 +60,26 @@ def _poly_d(p: Polygon) -> str:
     return "".join(_ring_d(r.coords) for r in [p.exterior, *p.interiors])
 
 
+@functools.lru_cache(maxsize=8)
+def _load(path: str) -> dict:
+    return json.loads(Path(path).read_text())
+
+
 def geometry_paths(ov: Overlay, pr: Projector) -> tuple[list[str], list[str]]:
     """(polygon path data, line path data) for an overlay, clipped to the frame and simplified to 0.03 mm."""
-    tr = pr.transformer(ov.src_crs)
+    same_crs = CRS.from_user_input(ov.src_crs) == CRS.from_user_input(pr.crs)
+    tr = None if same_crs else pr.transformer(ov.src_crs)
     clip = pr.frame_polygon_ground().buffer(pr.k * 2)
-    tol = pr.k * 0.03
+    tol = pr.k * pr.tol_mm
     polys, lines = [], []
-    data = json.loads(Path(ov.path).read_text())
+    data = _load(str(ov.path))
     feats = data["features"] if data.get("type") == "FeatureCollection" else [data]
     for ft in feats:
+        if ov.where and any(ft.get("properties", {}).get(k) != v for k, v in ov.where.items()):
+            continue
         g = shape(ft["geometry"] if "geometry" in ft else ft)
-        g = shp_transform(tr.transform, g)
+        if not same_crs:
+            g = shp_transform(tr.transform, g)
         if not g.intersects(clip):
             continue
         g = g.intersection(clip).simplify(tol)
@@ -87,7 +99,7 @@ def geometry_paths(ov: Overlay, pr: Projector) -> tuple[list[str], list[str]]:
 
 def overlay_svg(ov: Overlay, pr: Projector) -> str:
     polys, lines = geometry_paths(ov, pr)
-    style = f'stroke="{ov.stroke}" stroke-width="{ov.width_mm}" stroke-linejoin="round" opacity="{ov.opacity}"'
+    style = f'stroke="{ov.stroke}" stroke-width="{ov.width_mm}" stroke-linejoin="round" stroke-opacity="{ov.opacity}" fill-opacity="{ov.opacity}"'
     if ov.dash:
         style += f' stroke-dasharray="{ov.dash}"'
     out = []

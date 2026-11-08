@@ -12,6 +12,7 @@ LB = [0, 50, 150, 300, 600, 1000, 1500, 2000]  # land class breaks, metres
 SB = [0, 20, 50, 100, 200, 500, 1000]  # sea class breaks, metres
 LMAX, SMAX = 2000.0, 1300.0
 ZK = ["temperate", "boreal", "tundra", "arid"]
+SHADE_K_LAND, SHADE_K_SEA = 0.6, 0.4  # Relief preview/relief.js defaults
 
 ZPAL = {
     "light": {
@@ -64,7 +65,8 @@ def ramp(stops: tuple[np.ndarray, np.ndarray], t: np.ndarray) -> np.ndarray:
 class Style:
     """Detuned: stepped land classes cross-blended by climate zone, linear bathymetry, no shading or contours."""
 
-    def __init__(self, theme: str = "light"):
+    def __init__(self, theme: str = "light", shade: bool = False):
+        self.shade = shade  # apply Relief's hillshade multiplier: land 0.6, sea 0.4 strength, as the WebGL preview
         dark = theme == "dark"
         self.theme = theme
         self.land = {k: _stops(LB, [tune(c, 0.5, -0.08 if dark else 0.08) for c in ZPAL[theme][k]], LMAX) for k in ZK}
@@ -99,3 +101,9 @@ class Style:
                     + ramp(self.land["arid"], t) * a[:, None]
                 )
         return np.clip(np.round(out), 0, 255).astype(np.uint8)
+
+    def shade_rgb(self, rgb: np.ndarray, mult: np.ndarray, z: np.ndarray) -> np.ndarray:
+        """Multiply colours by Relief's shade multiplier at `uShadeK` (land 0.6) and `uSeaShadeK` (sea 0.4) strength."""
+        k = np.where(z > 0, SHADE_K_LAND, SHADE_K_SEA)
+        f = 1.0 + (np.clip(mult, 0.0, 1.6) - 1.0) * k
+        return np.clip(np.round(rgb.astype(float) * f[..., None]), 0, 255).astype(np.uint8)

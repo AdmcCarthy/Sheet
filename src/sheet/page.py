@@ -53,6 +53,8 @@ class SheetSpec:
     graticule: bool = True
     confidence: str = "Derived"
     min_pt: float = 6.0
+    shade: bool = False  # apply the hillshade Relief supplied
+    notes: list[str] = field(default_factory=list)  # extra statements for the facts block (e.g. contour intervals)
     layout: str = "auto"  # auto: rail for landscape sheets, standard (footer) for portrait
 
 
@@ -64,7 +66,7 @@ def _sha(p: Path) -> str:
     return h.hexdigest()[:16]
 
 
-def plan_layout(spec: SheetSpec, src: Source) -> dict:
+def plan_layout(spec: SheetSpec, bounds: tuple[float, float, float, float]) -> dict:
     sz = psizes.parse_size(spec.size)
     W, H = sz["w_mm"], sz["h_mm"]
     u = min(2.4, max(0.9, max(W, H) / 420))
@@ -80,7 +82,7 @@ def plan_layout(spec: SheetSpec, src: Source) -> dict:
     else:
         railw = 0.0
         fw, fh = W - 2 * M - 2 * pad, H - M - foot - 5 * u - fy
-    x0, y0, x1, y1 = src.bounds
+    x0, y0, x1, y1 = bounds
     scale = spec.scale or fit_scale((x0, y0, x1, y1), fw, fh)
     if spec.rotation == 0:  # shrink the frame to the data and centre it in the available area
         dw, dh = (x1 - x0) / scale * 1000, (y1 - y0) / scale * 1000
@@ -184,7 +186,8 @@ def build_page(spec: SheetSpec, lay: dict, src: Source, style: Style, map_img: P
     facts_block = (
         f'<p style="margin:0 0 1.5mm"><b>Scale</b> 1:{int(fr.scale):,} · <b>Confidence</b> {html.escape(spec.confidence)}</p>'
         f'<p style="margin:0 0 1.5mm">{html.escape(res["text"])}.</p>'
-        f'<p style="margin:0 0 1.5mm"><b>Sources</b> {html.escape(attrib)}</p>'
+        + "".join(f'<p style="margin:0 0 1.5mm">{html.escape(n)}</p>' for n in spec.notes)
+        + f'<p style="margin:0 0 1.5mm"><b>Sources</b> {html.escape(attrib)}</p>'
         f'<p style="margin:0"><b>Sheet</b> {today} · {html.escape(meta.get("revision", ""))} · Sheet {__version__}</p>'
     )
     if lay["layout"] == "rail":
@@ -261,8 +264,8 @@ def build_sheet(
 
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    style = Style(spec.theme)
-    lay = plan_layout(spec, src)
+    style = Style(spec.theme, shade=spec.shade)
+    lay = plan_layout(spec, meta.get("bounds") or src.bounds)
     fr = lay["frame"]
     stem = f"{spec.region}-{spec.size}-1to{int(fr.scale)}-{spec.dpi}dpi-{spec.theme}"
     raw = out / f"{stem}.npy"

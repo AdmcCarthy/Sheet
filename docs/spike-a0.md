@@ -22,3 +22,8 @@ by Chromium. WebGL stays Relief's interactive preview.
   interpolated. Finer print needs Relief's 25-50 m tiles (`data/out/<region>/tiles`) as a source.
 - Hillshade, contours and glaciers (other Relief styles) are not ported; the house style needs none of them.
 - Rotated frames work in the raster and overlays; GeoTIFF export is skipped for them.
+
+## Update: terrain layers come from Relief
+
+Hillshade, contours, coast and tile-pyramid sources (the gaps listed above) are produced by Relief's `scripts/print_layers.py`
+(generalised for scale and dpi, contract `relief_layers: 1`). Sheet only samples and draws them (`relief_layers.py`).

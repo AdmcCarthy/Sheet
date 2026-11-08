@@ -32,7 +32,7 @@ def render_terrain(src: Source, style: Style, frame: Frame, out: Path, strip_row
     res = src.res * f
     mm = np.lib.format.open_memmap(out, mode="w+", dtype=np.uint8, shape=(H, W, 3))
     ncol, nrow = z.shape[1], z.shape[0]
-    ext_w, ext_h = src.z.shape[1] * src.res, src.z.shape[0] * src.res
+    zl, zt, ext_w, ext_h = src.zones_box or (src.left, src.top, src.z.shape[1] * src.res, src.z.shape[0] * src.res)
     zones = src.zones
     ii = np.arange(W, dtype=np.float64)[None, :]
     for j0 in range(0, H, strip_rows):
@@ -44,13 +44,19 @@ def render_terrain(src: Source, style: Style, frame: Frame, out: Path, strip_row
         zz = map_coordinates(z, [row, col], order=1, mode="nearest", prefilter=False)
         zw = None
         if zones is not None:
-            u = (gx - src.left) / ext_w
-            v = (src.top - gy) / ext_h
+            u = (gx - zl) / ext_w
+            v = (zt - gy) / ext_h
             zr, zc = v * zones.shape[0] - 0.5, u * zones.shape[1] - 0.5
             zw = np.stack(
                 [map_coordinates(zones[..., c], [zr, zc], order=1, mode="nearest", prefilter=False) for c in range(3)], axis=-1
             )
         rgb = style.colour(zz, zw)
+        if src.hillshade is not None and style.shade:
+            hl, ht, hc = src.hs_box
+            m = map_coordinates(
+                src.hillshade, [(ht - gy) / hc - 0.5, (gx - hl) / hc - 0.5], order=1, mode="nearest", prefilter=False
+            )
+            rgb = style.shade_rgb(rgb, m, zz)
         if paper_outside:
             outside = (col < -0.5) | (col > ncol - 0.5) | (row < -0.5) | (row > nrow - 0.5)
             rgb[outside] = style.paper.astype(np.uint8)

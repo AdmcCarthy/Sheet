@@ -10,7 +10,7 @@ from sheet.frame import Frame, effective_dpi, fit_scale
 from sheet.layers import Projector
 from sheet.style import LB, SB, Style, rgb, tune
 
-RELIEF = Path(__file__).resolve().parents[2] / "Relief"
+RELIEF = Path(__import__('os').environ.get('RELIEF_DIR', Path(__file__).resolve().parents[2] / 'Relief'))
 needs_relief = pytest.mark.skipif(
     not (RELIEF / "data/out/north_sea/demo/elev.webp").exists(), reason="no Relief checkout next to Sheet"
 )
@@ -98,10 +98,11 @@ def test_numpy_render_matches_relief_webgl_reference(tmp_path):
 
 @needs_relief
 def test_small_sheet_builds_with_clean_qa(tmp_path):
-    from sheet.cli import load_region
+    from sheet.cli import load_direct, region_meta
     from sheet.page import SheetSpec, build_sheet
 
-    src, meta = load_region(RELIEF, "north_sea", "demo")
+    meta = region_meta(RELIEF, "north_sea")
+    src = load_direct(RELIEF, "north_sea", "demo")
     spec = SheetSpec(
         region="north_sea", title="Test sheet", kicker="TEST", size="a4-portrait", dpi=72, attribution=meta["attribution"]
     )
@@ -115,3 +116,27 @@ def test_small_sheet_builds_with_clean_qa(tmp_path):
     assert (round(w), round(h)) == (210, 297)
     assert "Test sheet" in r.pages[0].extract_text()
     assert json.loads((tmp_path / (Path(pdf["file"]).stem + ".manifest.json")).read_text())["facts"]["scale"] > 0
+
+
+LAYERS = (RELIEF / "scripts" / "print_layers.py").exists() and (RELIEF / "data/out/north_sea/tiles/tiles.json").exists()
+
+
+@pytest.mark.skipif(not LAYERS, reason="Relief checkout without print layers or tiles")
+def test_relief_layers_drive_a_shaded_contoured_sheet(tmp_path):
+    """Sheet asks Relief for the frame's layers and draws them: no terrain processing happens in Sheet."""
+    from sheet.cli import contour_overlays, region_meta
+    from sheet.page import SheetSpec, build_sheet, plan_layout
+    from sheet.relief_layers import fetch, to_source
+
+    meta = region_meta(RELIEF, "north_sea")
+    spec = SheetSpec(region="north_sea", title="Layers test", size="a4-portrait", dpi=72, scale=6_000_000, shade=True)
+    fr = plan_layout(spec, meta["bounds"])["frame"]
+    lay = fetch(RELIEF, "north_sea", fr, tmp_path / "layers", ("elevation", "zones", "hillshade", "contours"))
+    assert lay.manifest["relief_layers"] == 1 and lay.path("contours").exists()
+    src = to_source(lay, hillshade=True)
+    assert src.hillshade is not None and src.hillshade.max() <= 1.6
+    cov, note = contour_overlays(lay, "light", 72)
+    spec.overlays, spec.notes = cov, [note]
+    m = build_sheet(spec, src, meta, tmp_path, formats=("pdf",))
+    assert not m["qa"], m["qa"]
+    assert "Contours (Relief)" in note

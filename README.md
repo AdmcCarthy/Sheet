@@ -16,7 +16,9 @@ resolution statement, QA findings, hashes). The sheet states its scale, projecti
 
 | Option | Meaning |
 |---|---|
-| `--relief` | Path to a Relief checkout (default `../Relief`); reads `data/out/<region>/demo` and, if present, `data/raw/<region>/hires.tif` |
+| `--relief` | Path to a Relief checkout with print layers (default `../Relief`); Sheet asks `scripts/print_layers.py` for this frame's terrain |
+| `--engine` | `layers` (default: Relief print layers) or `direct` (demo texture / `hires.tif`, flat style only) |
+| `--shade`, `--contours`, `--coast` | Hillshade, generalised contours and 0 m line, all produced by Relief for the scale and dpi |
 | `--size` | `a4`..`a0` with `-portrait` / `-landscape`, `slide`, `square`, `WxHmm` |
 | `--scale` | Scale denominator; default the largest "nice" scale that fits the region |
 | `--dpi` | Raster resolution (A0 at 300 dpi = 91 MP in about 26 s, under 1 GB) |
@@ -25,5 +27,6 @@ resolution statement, QA findings, hashes). The sheet states its scale, projecti
 | `--rotation` | Grid bearing of "up" on the sheet |
 
 Portrait sheets get a three-column footer, landscape sheets a right-hand rail. See `docs/spike-a0.md` for why it is built
-this way and `styleguide/sheets.md` for the furniture rules. Not yet: hillshade/contour styles, locator inset, grid ticks,
-tile-pyramid sources for 25-50 m data.
+this way and `styleguide/sheets.md` for the furniture rules. **Terrain processing is Relief's job.** Sheet requests elevation, climate zones, hillshade and contours for one frame
+(region, extent, scale, dpi) and draws what comes back (contract: Relief `docs/print-layers.md`, `layers.json`). Contour
+intervals, generalisation and tile-level choice therefore stay in one place. Not yet: locator inset, grid ticks.

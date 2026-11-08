@@ -21,6 +21,11 @@ class Source:
     crs: str
     zones: np.ndarray | None  # (rows_z, cols_z, 3) float32 0..1 weights over the same extent
     note: str = ""
+    zones_box: tuple[float, float, float, float] | None = (
+        None  # left, top, width, height in metres; default: the grid's own extent
+    )
+    hillshade: np.ndarray | None = None  # shade multiplier (1.0 flat) from Relief, on its own grid
+    hs_box: tuple[float, float, float] | None = None  # left, top, cell
 
     @property
     def bounds(self) -> tuple[float, float, float, float]:
