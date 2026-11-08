@@ -20,7 +20,7 @@ Import this from a project `CLAUDE.md`. Short on purpose; detail lives in the st
 
 ## Reuse and licence
 - Reuse before you build: the maintainer keeps a directory of existing repos and what each is for (Idiom `DIRECTORY.md`). Style
-  comes from SubScout, map bases from Relief, facts and the knowledge store from the data engine. Say so when none fits.
+  comes from SubScout, map bases from Relief, facts and the knowledge store from the data engine. Datasets: look up terms and the attribution line in Idiom `DATASETS.md`; never write a licence from memory. Say so when none fits.
 - Every repo carries the MIT License with Acknowledgement (`house/licence.md`): anything built with the work says so, visibly, and
   never implies endorsement. Third-party data and vendored code keep their own terms.
 
