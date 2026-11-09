@@ -13,9 +13,11 @@ wildcat wells | house term | wildcat wellbores, exploration wellbores
 How we know | house label | Basis of analysis
 
 # Names and conventions (house style; CORE.md)
-Norwegian Petroleum Directorate | renamed 2024 | Sodir, the Norwegian Offshore Directorate (NPD only in historic citations and file paths)
 oil equivalents | unit wording | Sm³ o.e. first, boe alongside (1 Sm³ o.e. = 6.29 boe)
 Scandinavian design | too general | Norwegian restraint (the house term)
+
+# Not checkable as a phrase: write Sodir (the Norwegian Offshore Directorate) for the body renamed in 2024; the old name only in
+# historic citations, quoted licence texts and file paths.
 
 # Plain-word substitutions (derived from CORE "plain words"; Adam to confirm)
 utilise | plain words | use
