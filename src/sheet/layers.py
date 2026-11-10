@@ -87,9 +87,14 @@ def geometry_paths(ov: Overlay, pr: Projector) -> tuple[list[str], list[str]]:
         g = shape(ft["geometry"] if "geometry" in ft else ft)
         if not same_crs:
             g = shapely.transform(g, lambda c: np.column_stack(tr.transform(c[:, 0], c[:, 1])))
+        if not g.is_valid:  # overlays from other pipelines can carry self-touching rings; GEOS refuses to clip those
+            g = shapely.make_valid(g)
         if not g.intersects(clip):
             continue
-        g = g.intersection(clip).simplify(tol)
+        try:
+            g = g.intersection(clip).simplify(tol)
+        except shapely.errors.GEOSException:
+            g = shapely.make_valid(g.buffer(0)).intersection(clip).simplify(tol)
         if g.is_empty:
             continue
         g = shapely.transform(g, lambda c: np.column_stack(pr.to_mm(c[:, 0], c[:, 1])))
@@ -105,6 +110,8 @@ def geometry_paths(ov: Overlay, pr: Projector) -> tuple[list[str], list[str]]:
 
 
 def overlay_svg(ov: Overlay, pr: Projector) -> str:
+    if ov.fill.startswith("prop:") or ov.stroke.startswith("prop:"):
+        return overlay_svg_by_property(ov, pr)
     polys, lines = geometry_paths(ov, pr)
     style = f'stroke="{ov.stroke}" stroke-width="{ov.width_mm}" stroke-linejoin="round" stroke-opacity="{ov.opacity}" fill-opacity="{ov.opacity}"'
     if ov.dash:
@@ -206,3 +213,55 @@ def graticule_svg(pr: Projector, stroke: str, width_mm: float, label_pt_mm: floa
         else:
             txt.append(f'<text x="{x:.2f}" y="{y + label_pt_mm * 1.0 + off:.2f}" text-anchor="middle">{lb["t"]}</text>')
     return svg, "".join(txt), labels, step
+
+
+def overlay_svg_by_property(ov: Overlay, pr: Projector) -> str:
+    """One path per distinct colour when fill or stroke is `prop:<name>`: a geological map with hundreds of colours
+    stays a few hundred paths, each carrying its own fill, and the file stays small."""
+    import json
+
+    feats = json.loads(Path(ov.path).read_text(encoding="utf-8"))["features"]
+    if ov.where:
+        feats = [f for f in feats if all((f.get("properties") or {}).get(k) == v for k, v in ov.where.items())]
+    fill_prop = ov.fill[5:] if ov.fill.startswith("prop:") else None
+    stroke_prop = ov.stroke[5:] if ov.stroke.startswith("prop:") else None
+    tr = pr.transformer(ov.src_crs)
+    frame_poly = pr.frame_polygon_ground()
+    groups: dict[tuple[str, str], tuple[list[str], list[str]]] = {}
+    for f in feats:
+        row = f.get("properties") or {}
+        g = shape(f["geometry"]) if f.get("geometry") else None
+        if g is None or g.is_empty:
+            continue
+        if ov.src_crs != pr.crs:
+            g = shapely.transform(g, lambda c: np.column_stack(tr.transform(c[:, 0], c[:, 1])))
+        if not g.is_valid:
+            g = shapely.make_valid(g)
+        try:
+            g = g.intersection(frame_poly)
+        except shapely.errors.GEOSException:
+            g = shapely.make_valid(g.buffer(0)).intersection(frame_poly)
+        if g.is_empty:
+            continue
+        g = g.simplify(pr.tol_mm * pr.k, preserve_topology=True)
+        g = shapely.transform(g, lambda c: np.column_stack(pr.to_mm(c[:, 0], c[:, 1])))
+        fill = str(row.get(fill_prop, "#cccccc")) if fill_prop else ov.fill
+        stroke = str(row.get(stroke_prop, ov.stroke)) if stroke_prop else ov.stroke
+        polys, lines = groups.setdefault((fill, stroke), ([], []))
+        for part in (list(g.geoms) if hasattr(g, "geoms") else [g]):
+            if isinstance(part, Polygon):
+                polys.append(_poly_d(part))
+            elif isinstance(part, MultiPolygon):
+                polys.extend(_poly_d(q) for q in part.geoms)
+            elif part.geom_type == "LineString":
+                lines.append("M" + "L".join(f"{x:.2f},{y:.2f}" for x, y in part.coords))
+    out = []
+    for (fill, stroke), (polys, lines) in groups.items():
+        style = f'stroke="{stroke}" stroke-width="{ov.width_mm}" stroke-linejoin="round" stroke-opacity="{ov.opacity}" fill-opacity="{ov.opacity}"'
+        if ov.dash:
+            style += f' stroke-dasharray="{ov.dash}"'
+        if polys:
+            out.append(f'<path d="{"".join(polys)}" fill="{fill}" fill-rule="evenodd" {style}/>')
+        if lines:
+            out.append(f'<path d="{"".join(lines)}" fill="none" {style}/>')
+    return f'<g data-layer="{ov.name}">' + "".join(out) + "</g>"

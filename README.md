@@ -36,3 +36,13 @@ intervals, generalisation and tile-level choice therefore stay in one place. Not
 MIT License with Acknowledgement ([LICENSE](LICENSE)): the MIT terms plus one condition. Anything built with this work says so,
 visibly and in plain words, and does not imply endorsement: "Built with Sheet by Adam McCarthy (https://github.com/AdmcCarthy/Sheet)". The wording is custom, so
 the licence is not OSI-approved. Third-party data and vendored code keep their own terms.
+
+## Overlays with their own colours, a chosen frame, a harder shade (2026-11-10)
+
+- `--overlay file.geojson,fill=prop:fill,stroke=none,crs=EPSG:3035` reads the fill (or `stroke=prop:<name>`) from each
+  feature's properties and writes one path per colour, so a geological map or a set of catchments comes in as one layer.
+  Invalid rings are made valid before clipping. `dash=` is accepted too.
+- `--extent x0,y0,x1,y1` (region CRS metres) frames that box instead of the whole region, for a sheet on one part of a
+  Relief region (the East Shetland Platform inside `north_sea`).
+- `--shade-model hard` asks Relief for a single-light hillshade (315/45) instead of the soft six-light model.
+  The first sheets made this way are in `source-to-sink/preview/sheets/`.

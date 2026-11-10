@@ -98,17 +98,21 @@ def main(argv=None) -> int:
         s.add_argument("--subtitle", default="")
         s.add_argument("--kicker", default="")
         s.add_argument("--shade", action="store_true", help="hillshade from Relief (soft, multi-directional)")
+        s.add_argument("--shade-model", choices=["soft", "hard"], default="soft", help="Relief's six-light soft shade or one light at 315/45")
         s.add_argument("--contours", action="store_true", help="contour lines from Relief, generalised for the scale")
         s.add_argument("--coast", action="store_true", help="Relief's generalised 0 m line")
         s.add_argument(
             "--overlay", action="append", default=[], help="path.geojson[,name=..,stroke=..,fill=..,width=..,source=..,crs=..]"
         )
         s.add_argument("--no-graticule", action="store_true")
+        s.add_argument("--extent", help="x0,y0,x1,y1 in the region CRS (metres): frame this box instead of the whole region")
         s.add_argument("--format", action="append", choices=["pdf", "jpg", "tif", "png"])
         s.add_argument("--out", type=Path, default=Path("_out/sheets"))
         s.add_argument("--strict", action="store_true")
     a = p.parse_args(argv)
     meta = region_meta(a.relief, a.region)
+    if getattr(a, "extent", None):
+        meta["bounds"] = tuple(float(v) for v in a.extent.split(","))
     ovs = []
     for o in a.overlay:
         path, *kv = o.split(",")
@@ -121,6 +125,7 @@ def main(argv=None) -> int:
                 fill=d.get("fill", "none"),
                 width_mm=float(d.get("width", 0.18)),
                 opacity=float(d.get("opacity", 1)),
+                dash=d.get("dash", ""),
                 src_crs=d.get("crs", "EPSG:4326"),
                 source=d.get("source", ""),
             )
@@ -161,7 +166,7 @@ def main(argv=None) -> int:
             + (["contours"] if a.contours else [])
             + (["coast"] if a.coast else [])
         )
-        rl = fetch(a.relief, a.region, fr, Path(work.name), tuple(wanted), "tiles" if a.source in ("auto", "tiles") else "hires")
+        rl = fetch(a.relief, a.region, fr, Path(work.name), tuple(wanted), "tiles" if a.source in ("auto", "tiles") else "hires", a.shade_model)
         src = to_source(rl, hillshade=a.shade)
         meta["attribution"] = rl.manifest["attribution"] + [x for x in meta["attribution"] if x.startswith("Climate zones")]
         spec.attribution = meta["attribution"]
