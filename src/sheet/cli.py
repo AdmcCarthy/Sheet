@@ -98,7 +98,9 @@ def main(argv=None) -> int:
         s.add_argument("--subtitle", default="")
         s.add_argument("--kicker", default="")
         s.add_argument("--shade", action="store_true", help="hillshade from Relief (soft, multi-directional)")
-        s.add_argument("--shade-model", choices=["soft", "hard"], default="soft", help="Relief's six-light soft shade or one light at 315/45")
+        s.add_argument(
+            "--shade-model", choices=["soft", "hard"], default="soft", help="Relief's six-light soft shade or one light at 315/45"
+        )
         s.add_argument("--contours", action="store_true", help="contour lines from Relief, generalised for the scale")
         s.add_argument("--coast", action="store_true", help="Relief's generalised 0 m line")
         s.add_argument(
@@ -166,7 +168,15 @@ def main(argv=None) -> int:
             + (["contours"] if a.contours else [])
             + (["coast"] if a.coast else [])
         )
-        rl = fetch(a.relief, a.region, fr, Path(work.name), tuple(wanted), "tiles" if a.source in ("auto", "tiles") else "hires", a.shade_model)
+        rl = fetch(
+            a.relief,
+            a.region,
+            fr,
+            Path(work.name),
+            tuple(wanted),
+            "tiles" if a.source in ("auto", "tiles") else "hires",
+            a.shade_model,
+        )
         src = to_source(rl, hillshade=a.shade)
         meta["attribution"] = rl.manifest["attribution"] + [x for x in meta["attribution"] if x.startswith("Climate zones")]
         spec.attribution = meta["attribution"]

@@ -248,7 +248,7 @@ def overlay_svg_by_property(ov: Overlay, pr: Projector) -> str:
         fill = str(row.get(fill_prop, "#cccccc")) if fill_prop else ov.fill
         stroke = str(row.get(stroke_prop, ov.stroke)) if stroke_prop else ov.stroke
         polys, lines = groups.setdefault((fill, stroke), ([], []))
-        for part in (list(g.geoms) if hasattr(g, "geoms") else [g]):
+        for part in list(g.geoms) if hasattr(g, "geoms") else [g]:
             if isinstance(part, Polygon):
                 polys.append(_poly_d(part))
             elif isinstance(part, MultiPolygon):

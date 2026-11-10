@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from pathlib import Path
 
@@ -214,5 +215,6 @@ def test_a_rewritten_overlay_file_is_read_again(tmp_path):
     p = _overlay_file(tmp_path, [square(500_000)])
     first = geometry_paths(Overlay(p, src_crs="EPSG:25832"), pr)[0][0]
     _overlay_file(tmp_path, [square(520_000)])  # same path, new content
+    os.utime(p, ns=(p.stat().st_atime_ns, p.stat().st_mtime_ns + 1_000_000_000))  # a coarse clock can give both writes one mtime
     second = geometry_paths(Overlay(p, src_crs="EPSG:25832"), pr)[0][0]
     assert first != second and second.startswith("M120.00")

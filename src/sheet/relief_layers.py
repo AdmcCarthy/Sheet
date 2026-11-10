@@ -35,8 +35,15 @@ def frame_extent(frame: Frame, margin_cells: float = 4.0, cell: float = 150.0) -
     return (min(xs) - m, min(ys) - m, max(xs) + m, max(ys) + m)
 
 
-def fetch(relief: Path, region: str, frame: Frame, out: Path, layers=("elevation", "zones"), source: str = "auto",
-          shade_model: str = "soft") -> Layers:
+def fetch(
+    relief: Path,
+    region: str,
+    frame: Frame,
+    out: Path,
+    layers=("elevation", "zones"),
+    source: str = "auto",
+    shade_model: str = "soft",
+) -> Layers:
     """Run Relief's print_layers for this frame (Relief's own environment, run from its folder)."""
     relief, out = Path(relief).resolve(), Path(out).resolve()
     script = relief / "scripts" / "print_layers.py"
