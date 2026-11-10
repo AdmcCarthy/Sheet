@@ -12,6 +12,8 @@ are shared by every output repo (SubScout, Plate, Sheet).
 - **Truth gate:** zero baselines, one y-axis, area by area, source/units/confidence on every figure,
   disclosed persuasive choices.
 - **Maps:** normalise choropleths, declare classification, state CRS, scale and source resolution.
+- **Screens:** desktop first. Design on 1440 × 900, check 1920 × 1080 and 1280 × 720, check a phone at 390 × 844 but do not
+  design for it; map frames are landscape, 2 : 1 and never narrower than 16 : 9 (`house/screens.md`).
 - **Print (Plate and Sheet):** real page sizes in mm, type no smaller than 6 pt, vector text, metadata in the
   file, effective resolution stated.
 - **Headings and labels:** the article headline may be creative; sub-story, panel and box headings are plain and say what
