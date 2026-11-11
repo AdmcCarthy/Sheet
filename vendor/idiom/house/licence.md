@@ -1,6 +1,7 @@
 # Licence and acknowledgement
 
-Every repo of Adam McCarthy's carries the same licence: **MIT License with Acknowledgement** (SPDX identifier
+Every public repo of Adam McCarthy's carries the same licence, and so does a private repo from the day it, or anything built from it,
+goes public (until then a private repo has no `LICENSE` and the audit does not ask for one): **MIT License with Acknowledgement** (SPDX identifier
 `LicenseRef-MIT-Acknowledgement`). It is the MIT licence plus one condition: anything built with the work must say so, visibly
 and in plain words, and must not imply endorsement. It is custom wording, so it is not OSI-approved; the repo says this in one
 line so nobody is surprised.

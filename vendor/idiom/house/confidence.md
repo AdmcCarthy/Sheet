@@ -1,6 +1,6 @@
 # Confidence: one system, two vocabularies
 
-Readers meet three levels. The knowledge store (`ep_geoscience_analytics/knowledge/`) grades its items more finely, because it
+Readers meet three levels. The knowledge store of the project's data engine grades its items more finely, because it
 has to say where a number came from and how far it has been tested. This file is the bridge, so a story built from store items
 labels them the same way every time.
 

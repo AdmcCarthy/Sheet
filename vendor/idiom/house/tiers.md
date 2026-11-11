@@ -17,9 +17,9 @@ an agent may do with it. Where an item has no tag, treat it as a Default.
 2. **The voice**: impersonal in published work and documentation (replies to Adam may use "I"); British English with sentence-case
    headings; no barred words or terms (the house terms and the private word list); no summary wrap-up, every section and reply ends on its last point.
 3. **The private/public line**: nothing from Idiom's private folders leaves Idiom; nothing is made public, deleted or
-   force-pushed unasked.
-4. **Licence and attribution**: the MIT License with Acknowledgement on every repo; the dataset attribution line wherever the data
-   are used; never a licence written from memory.
+   force-pushed unasked, and nobody's uncommitted work is committed unasked.
+4. **Licence and attribution**: the MIT License with Acknowledgement on every public repo, and on a private one from the day it, or
+   anything built from it, goes public; the dataset attribution line wherever the data are used; never a licence written from memory.
 
 Everything else in `CORE.md` and the style guides is a Default or a Preference until Adam says otherwise.
 

@@ -27,8 +27,8 @@ exception. Precedence among rules: Law, then Defaults in this file, then `house/
 - **[Default]** Reuse before you build: the maintainer keeps a directory of existing repos and what each is for (Idiom `DIRECTORY.md`). Style
   comes from SubScout, map bases from Relief, facts and the knowledge store from the data engine. Say so when none fits.
 - **[Law]** Datasets: look up terms and the attribution line in Idiom `DATASETS.md`, show the line wherever the data are used, and never write a licence from memory.
-- **[Law]** Every repo carries the MIT License with Acknowledgement (`house/licence.md`): anything built with the work says so, visibly, and
-  never implies endorsement. Third-party data and vendored code keep their own terms.
+- **[Law]** Every public repo carries the MIT License with Acknowledgement (`house/licence.md`), and a private one from the day it, or anything
+  built from it, goes public: anything built with the work says so, visibly, and never implies endorsement. Third-party data and vendored code keep their own terms.
 
 ## Working rules
 - **[Preference]** Act on the plan; stop at agreed gates and report outcomes plainly, including failures and skipped steps.
