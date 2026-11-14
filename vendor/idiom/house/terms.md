@@ -28,3 +28,11 @@ prior to | plain words | before
 a number of | plain words | several, or the number
 going forward | filler | (cut; say when)
 best-in-class | hype | (say what it does better)
+
+# Engineering compounds and forms (2026-11-12)
+well bore | compound | wellbore
+bore hole | compound | borehole
+off-shore | compound | offshore
+leakoff | compound | leak-off
+buildup | compound | build-up
+shutin | compound | shut-in

@@ -47,3 +47,19 @@ Observed: "In the 1990s 42 % of exploration wellbores found oil or gas." Derived
 and discovery tables, three-year centred." Interpreted: "Around half of the volume found since 2016 is likely to be developed,
 on the assumption that discoveries under evaluation follow the 2000s pattern (range 40 to 60 %)." The first states, the second
 shows its working, the third names what it rests on.
+
+## Prose forms for each grade
+
+**[Default]** Promoted 2026-11-12 from `working/proposal-confidence-prose-forms.md`. The bridge above fixes the level and what the page must add; these forms give the wording, so a sentence shows its grade without naming it. The values are invented illustrations.
+
+| Grade | Level | Prose form |
+|---|---|---|
+| `exact` | Observed | "By definition, 1 bar is 100 kPa." No qualifier. |
+| `official` | Observed | "The Norwegian Offshore Directorate classifies the field as developed; the classification dates from [date]." The limitation named where it bears on the reading. |
+| `verified` | Derived | "Calculated from the closure pressures with the Hubbert and Willis relation; it reproduces 38 of 45 values in the project's own data." Method and test data named. |
+| `published` | Interpreted | "A published relation, untested here: [author, year] give [value] for [condition]." |
+| `contested` | Interpreted | "The published relation does not hold in the project's data: [finding]. The disagreement stands." Never resolved by a quiet choice. |
+| `inferred` | Interpreted | "From the closure pressure and the vertical stress, the minimum stress is about 41 MPa, on the assumption that [assumption]; the range is [range]." |
+| `placeholder` | Interpreted, flagged | "A placeholder of 25 m, pending a position-accuracy standard; it waits for data and is not used in a headline figure." |
+
+After a limitation, name the evidence that would lift it, in a clause ("pending a position-accuracy standard").
